@@ -25,3 +25,8 @@ id_users INT NOT NULL,
 FOREIGN KEY (id_category) REFERENCES category(id_category),
 FOREIGN KEY (id_users) REFERENCES users(id_users) 
 )ENGINE=innoDB;
+
+ALTER TABLE book
+MODIFY publication_date DATE;
+
+
