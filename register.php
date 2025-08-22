@@ -1,7 +1,7 @@
 <?php
 include "./env.php";
 include "./utils/tool.php";
-
+use Utils\Bdd;
 
 $message = "";
 if (isset($_POST["submit"]) && !empty($_POST["firstname"]) && !empty($_POST["lastname"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
@@ -11,6 +11,9 @@ if (isset($_POST["submit"]) && !empty($_POST["firstname"]) && !empty($_POST["las
     $mdp = sanitize($_POST["password"]);
     $hashmdp = password_hash($mdp,PASSWORD_DEFAULT);
     if (filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
+        $verif = connectBDD()->prepare("SELECT id FROM users WHERE email = ?");
+        $test= $verif->execute([$email]);
+        echo "$test";
         $message = "Compte ajouté";
     } else {
         $message = "L'email n'est pas un email";
