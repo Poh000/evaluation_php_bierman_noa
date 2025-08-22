@@ -71,7 +71,7 @@ if (isset($_POST["submit"]) && !empty($_POST["title"]) && !empty($_POST["descrip
             <h2>Ajouter un livre</h2>
             <input type="text" name="title" placeholder="Titre du livre">
             <input type="text" name="description" placeholder="Description du livre">
-            <input type="date" name="date_pub" placeholder="Date de publication">
+            <input type="date" name="date_pub" placeholder="Date de publication"> <!-- Je pars du principe que l'on poste la date de publication du livre tout court et non sur le site donc si le livre est sortie il y a longtemps l'utilisateur ne connaitra pas l'heure -->
             <input type="text" name="author" placeholder="Livre de quel auteur">
             <input type="text" name="category" placeholder="Livre de quelle catégorie">
             <input type="submit" value="inscription" name="submit">
