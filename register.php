@@ -1,26 +1,33 @@
 <?php
+
 include "./env.php";
 include "./utils/tool.php";
-use Utils\Bdd;
 
 $message = "";
 if (isset($_POST["submit"]) && !empty($_POST["firstname"]) && !empty($_POST["lastname"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
-    $nom = sanitize($_POST["firstname"]);
-    $prenom = sanitize($_POST["lastname"]);
+    $firstname = sanitize($_POST["firstname"]);
+    $lastname = sanitize($_POST["lastname"]);
     $email = sanitize($_POST["email"]);
-    $mdp = sanitize($_POST["password"]);
-    $hashmdp = password_hash($mdp,PASSWORD_DEFAULT);
-    if (filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
-        $verif = connectBDD()->prepare("SELECT id FROM users WHERE email = ?");
-        $test= $verif->execute([$email]);
-        echo "$test";
-        $message = "Compte ajouté";
+    $password = sanitize($_POST["password"]);
+    $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        try {
+            $nouvelleCo = "mysql:host=" . BDD_SERVER . ";dbname=" . BDD_NAME . ";charset=utf8";
+            $connexion = new PDO($nouvelleCo, BDD_LOGIN, BDD_PASSWORD);
+            $req = "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)";
+            $prep = $connexion->prepare($req);
+            $prep->execute([$firstname, $lastname, $email, $hashPassword]);
+            $message = "Compte ajouté avec succès !";
+        } catch (PDOException $e) {
+            $message = "Ce mail est déjà utilisé";
+        }
     } else {
-        $message = "L'email n'est pas un email";
+        $message = "L'email n'est pas valide.";
     }
 } else {
-    $message = "Tous les champs ne sont pas remplis";
+    $message = "Tous les champs ne sont pas remplis.";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -35,18 +42,18 @@ if (isset($_POST["submit"]) && !empty($_POST["firstname"]) && !empty($_POST["las
 </head>
 
 <body>
-    <header class="container-fluid">
+        <header class="container-fluid">
         <nav>
             <!-- Menu connecté -->
             <?php if (isset($_SESSION["connected"])) : ?>
                 <ul>
-                    <li><a href="<?= BASE_URL ?>/book/all" data-tooltip="Liste des livres">Liste des livres</a></li>
-                    <li><a href="<?= BASE_URL ?>/book/add" data-tooltip="Ajouter un livre">Ajouter un livre</a></li>
-                    <li><a href="<?= BASE_URL ?>/user/deconnexion" data-tooltip="Déconnexion">Se déconnecter</a></li>
+                    <li><a href="<?= BASE_URL ?>/showAllBook.php" data-tooltip="Liste des livres">Liste des livres</a></li>
+                    <li><a href="<?= BASE_URL ?>/AddBook.php" data-tooltip="Ajouter un livre">Ajouter un livre</a></li>
+                    <li><a href="<?= BASE_URL ?>/deconnexion.php" data-tooltip="Déconnexion">Se déconnecter</a></li>
                 <?php else : ?>
                     <!-- Menu déconnecté -->
-                    <li><a href="<?= BASE_URL ?>/user/register" data-tooltip="Créer un compte">Inscription</a></li>
-                    <li><a href="<?= BASE_URL ?>/user/connexion" data-tooltip="Se connecter">Connexion</a></li>
+                    <li><a href="<?= BASE_URL ?>/register.php" data-tooltip="Créer un compte">Inscription</a></li>
+                    <li><a href="<?= BASE_URL ?>/connexion.php" data-tooltip="Se connecter">Connexion</a></li>
                 <?php endif ?>
                 </ul>
         </nav>
