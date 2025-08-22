@@ -19,12 +19,12 @@ if (isset($_POST["submit"]) && !empty($_POST["title"]) && !empty($_POST["descrip
     $category = sanitize($_POST["category"]);
     $idActuel = $_SESSION["user_id"];
     if (!isBookExist($title)) {
-        $idCategory = findCategoryByName($category);
-        echo $idCategory;
         if (isCategoryExist($category)) {
-            AddBook([$title, $description, $date_pub, $author,$idCategory, $idActuel]);
+            $idCategory = findCategoryByName($category);
+            AddBook([$title, $description, $date_pub, $author, $idCategory, $idActuel]);
+            $message = "Le livre à bien été ajouté";
         } else {
-            $message = "Cette catégorie n'éxiste pas";
+            $message = "Cette catégorie n'existe pas";
         }
     } else {
         $message = "Ce livre est déjà publié";

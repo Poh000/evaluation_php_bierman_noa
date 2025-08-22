@@ -19,13 +19,13 @@ function AddBook($tab)
 {
     try {
         $connexion = getConnection();
-        $request = "INSERT INTO book (title, description, date_pub AS publication_date, author, id_category, id_users) VALUES (?, ?, ?, ?, ?, ?)";
+        $request = "INSERT INTO book (title, description, publication_date, author, id_category, id_users) VALUES (?, ?, ?, ?, ?, ?)";
         $prep = $connexion->prepare($request);
         $prep->execute($tab);
         $message = $tab;
         return $message;
     } catch (PDOException $e) {
-        $message = "Erreure Tableau";
+        $message = "Erreur Tableau";
         return $message;
     }
 }
