@@ -2,6 +2,8 @@
 
 include "./env.php";
 include "./utils/tool.php";
+include "./utils/bdd.php";
+include "./model/user.php";
 
 $message = "";
 if (isset($_POST["submit"]) && !empty($_POST["firstname"]) && !empty($_POST["lastname"]) && !empty($_POST["email"]) && !empty($_POST["password"])) {
@@ -11,14 +13,11 @@ if (isset($_POST["submit"]) && !empty($_POST["firstname"]) && !empty($_POST["las
     $password = sanitize($_POST["password"]);
     $hashPassword = password_hash($password, PASSWORD_DEFAULT);
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        try {
-            $nouvelleCo = "mysql:host=" . BDD_SERVER . ";dbname=" . BDD_NAME . ";charset=utf8";
-            $connexion = new PDO($nouvelleCo, BDD_LOGIN, BDD_PASSWORD);
-            $req = "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)";
-            $prep = $connexion->prepare($req);
-            $prep->execute([$firstname, $lastname, $email, $hashPassword]);
-            $message = "Compte ajouté avec succès !";
-        } catch (PDOException $e) {
+        echo isUserByEmailExist($email);
+        if (!isUserByEmailExist($email)) {
+            AddUser([$firstname, $lastname, $email, $hashPassword]);
+            $message = "Inscription réussie";
+        } else {
             $message = "Ce mail est déjà utilisé";
         }
     } else {
@@ -42,8 +41,12 @@ if (isset($_POST["submit"]) && !empty($_POST["firstname"]) && !empty($_POST["las
 </head>
 
 <body>
-        <header class="container-fluid">
+    <header class="container-fluid">
         <nav>
+            <ul>
+                <!-- Menu commun -->
+                <li><strong><a href="<?= BASE_URL ?>/" data-tooltip="Page Accueil">Accueil</a></strong></li>
+            </ul>
             <!-- Menu connecté -->
             <?php if (isset($_SESSION["connected"])) : ?>
                 <ul>

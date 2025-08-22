@@ -1,5 +1,6 @@
 <?php
 include "./env.php";
+session_start();
 
 ?>
 
@@ -11,12 +12,16 @@ include "./env.php";
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./public/style.css">
     <link rel="stylesheet" href="./public/pico.min.css">
-    <title>Inscription</title>
+    <title>Accueil</title>
 </head>
 
 <body>
-        <header class="container-fluid">
+    <header class="container-fluid">
         <nav>
+            <ul>
+                <!-- Menu commun -->
+                <li><strong><a href="<?= BASE_URL ?>/" data-tooltip="Page Accueil">Accueil</a></strong></li>
+            </ul>
             <!-- Menu connecté -->
             <?php if (isset($_SESSION["connected"])) : ?>
                 <ul>

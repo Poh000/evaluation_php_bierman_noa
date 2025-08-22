@@ -2,8 +2,7 @@
 
 function isUserByEmailExist($email): bool
 {
-    $nouvelleCo = "mysql:host=" . BDD_SERVER . ";dbname=" . BDD_NAME . ";charset=utf8";
-    $connexion = new PDO($nouvelleCo, BDD_LOGIN, BDD_PASSWORD);
+    $connexion = getConnection();
     try {
         $request = "SELECT u.id_users FROM users AS u WHERE u.email = ?";
         $req = $connexion->prepare($request);
@@ -19,22 +18,20 @@ function isUserByEmailExist($email): bool
 function AddUser($tab)
 {
     try {
-        $nouvelleCo = "mysql:host=" . BDD_SERVER . ";dbname=" . BDD_NAME . ";charset=utf8";
-        $connexion = new PDO($nouvelleCo, BDD_LOGIN, BDD_PASSWORD);
+        $connexion = getConnection();
         $request = "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)";
         $prep = $connexion->prepare($request);
-        $prep->execute([$tab]);
+        $prep->execute($tab);
         $message = "Compte ajouté avec succès !";
     } catch (PDOException $e) {
-        $message = "Ce mail est déjà utilisé";
+        $message = "Erreure Tableau";
     }
 }
 
 function findUserByEmail($email)
     {
         try {
-            $nouvelleCo = "mysql:host=" . BDD_SERVER . ";dbname=" . BDD_NAME . ";charset=utf8";
-            $connexion = new PDO($nouvelleCo, BDD_LOGIN, BDD_PASSWORD);
+            $connexion = getConnection();
             $request = "SELECT u.id_users AS idUser,u.email, u.firstname, u.lastname, u.password FROM users AS u WHERE u.email = ?";
             $req = $connexion->prepare($request);
             $req->bindParam(1, $email, \PDO::PARAM_STR);

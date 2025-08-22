@@ -1,5 +1,6 @@
 <?php
 include "./env.php";
+include "./utils/bdd.php";
 include "./utils/tool.php";
 include "./model/user.php";
 
@@ -9,12 +10,23 @@ if (isset($_POST["submit"]) && !empty($_POST["email"]) && !empty($_POST["passwor
     $password = sanitize($_POST["password"]);
     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
         if (isUserByEmailExist($email) != 0) {
-            
+            $user = findUserByEmail($email);
+
+            if ($user) {
+                if (password_verify($password, $user['password'])) {
+                    session_start();
+                    $_SESSION["connected"] = true;
+                    $_SESSION["user_id"] = $user["idUser"];
+                    $message = "Connexion réussie !";
+                } else {
+                    $message = "Mot de passe incorrect.";
+                }
+            } else {
+                $message = "Cet email n'existe pas.";
+            }
         } else {
-            echo "Deja utilisé";
+            $message = "Tous les champs ne sont pas remplis.";
         }
-    } else {
-        $message = "Tous les champs ne sont pas remplis.";
     }
 }
 ?>
@@ -32,6 +44,11 @@ if (isset($_POST["submit"]) && !empty($_POST["email"]) && !empty($_POST["passwor
 <body>
     <header class="container-fluid">
         <nav>
+
+            <ul>
+                <!-- Menu commun -->
+                <li><strong><a href="<?= BASE_URL ?>/" data-tooltip="Page Accueil">Accueil</a></strong></li>
+            </ul>
             <!-- Menu connecté -->
             <?php if (isset($_SESSION["connected"])) : ?>
                 <ul>
@@ -52,7 +69,7 @@ if (isset($_POST["submit"]) && !empty($_POST["email"]) && !empty($_POST["passwor
             <h2>Se connecter</h2>
             <input type="email" name="email" placeholder="saisir le mail">
             <input type="password" name="password" placeholder="saisir le password">
-            <input type="submit" value="inscription" name="submit">
+            <input type="submit" value="Connexion" name="submit">
             <p class="error"><?= $message ?></p>
         </form>
 
